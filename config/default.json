@@ -1,3 +1,3 @@
 {
-    "mongoURI": "mongodb+srv://b:b@mongofreetier.fu2eh.mongodb.net/test?retryWrites=true&w=majority"
+    "mongoURI": "mongodb+srv://c:c@mongofreetier.fu2eh.mongodb.net/test?retryWrites=true&w=majority"
 }
