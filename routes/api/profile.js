@@ -90,7 +90,6 @@ router.put(
       }
 
       profile = new Profile(profileFields);
-      console.log("profile----", profile);
 
       await profile.save();
       res.json(profile);
@@ -137,6 +136,20 @@ router.get("/user/:user_id", async (req, res) => {
     if (err.kind == "ObjectId") {
       return res.status("400").json({ msg: "Profile not found" });
     }
+    return res.status(500).send("Server error");
+  }
+});
+
+// @route    DELETE api/profile
+// @desc     Delete user, profile and posts
+// @access   Private
+router.delete("/", auth, async (req, res) => {
+  try {
+    await Profile.findOneAndDelete({ user: req.user.id });
+    await User.findByIdAndDelete(req.user.id);
+    return res.json({ msg: "User removed" });
+  } catch (err) {
+    console.error(err.message);
     return res.status(500).send("Server error");
   }
 });
