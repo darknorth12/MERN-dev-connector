@@ -55,7 +55,7 @@ router.put(
       facebook,
       instagram,
       linkedin,
-      twitter
+      twitter,
     } = req.body;
 
     const profileFields = {};
@@ -90,7 +90,7 @@ router.put(
       }
 
       profile = new Profile(profileFields);
-      console.log("profile----",profile)
+      console.log("profile----", profile);
 
       await profile.save();
       res.json(profile);
@@ -102,5 +102,43 @@ router.put(
     return res.send("Success");
   }
 );
+
+// @route    GET api/profile
+// @desc     Get all profiles
+// @access   Public
+router.get("/", async (req, res) => {
+  try {
+    const profiles = await Profile.find({}).populate("user", [
+      "name",
+      "avatar",
+    ]);
+    return res.json({ profiles });
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).send("Server error");
+  }
+});
+
+// @route    GET api/profile/user/:user_id
+// @desc     Get profile by user ID
+// @access   Public
+router.get("/user/:user_id", async (req, res) => {
+  try {
+    const profile = await Profile.findOne({
+      user: req.params.user_id,
+    }).populate("user", ["name", "avatar"]);
+
+    if (!profile) {
+      return res.status("400").json({ msg: "Profile not found" });
+    }
+    return res.json(profile);
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind == "ObjectId") {
+      return res.status("400").json({ msg: "Profile not found" });
+    }
+    return res.status(500).send("Server error");
+  }
+});
 
 module.exports = router;
